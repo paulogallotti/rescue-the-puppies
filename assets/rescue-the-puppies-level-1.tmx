@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="50" height="20" tilewidth="21" tileheight="21" infinite="0" nextlayerid="7" nextobjectid="9">
+ <tileset firstgid="1" source="platformerart_pixelredux_2.tsx"/>
+ <layer id="1" name="ground" width="50" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzt0MEJgDAQRNFNbMFCDNqGiLaq6U+FHEJAdvdi5jAD/5bDvohwHMdxHMf5Nw7+EIfqmIPIEuzvER2vYX86HJYzilyOcvzHsJWsFiRHa/BYUBxfBqsFwaEZaksqTU0JIM2wdkr7V0u9bq+7AR/XVtI=
+  </data>
+ </layer>
+ <layer id="3" name="background" width="50" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApGwXACgsz48VAB+sz4MS3ALybqmzkQ/qAF2AYMm+048A4ahButwKg/qAeokV9A/riKhLcjsQd1fDACESOCO2T9MQoGHQAAKK4j0A==
+  </data>
+ </layer>
+ <layer id="2" name="goal" width="50" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApGwSgYvOAX00C7YBSMglGADA7QIE/uB5p5FWouvfL8PRrYc3e0vBoFFAIAgb0GEg==
+  </data>
+ </layer>
+ <layer id="5" name="poop" width="50" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztzAENAAAIA6DPtvYvYA23QwASAACAXju/P3ocD1IA1w==
+  </data>
+ </layer>
+ <objectgroup id="6" name="puppies">
+  <object id="2" gid="471" x="203.333" y="377" width="21" height="21">
+   <properties>
+    <property name="point_value" type="int" value="10"/>
+   </properties>
+  </object>
+  <object id="3" gid="471" x="313.333" y="291" width="21" height="21">
+   <properties>
+    <property name="point_value" type="int" value="10"/>
+   </properties>
+  </object>
+  <object id="5" gid="471" x="987.333" y="354.333" width="21" height="21">
+   <properties>
+    <property name="point_value" type="int" value="10"/>
+   </properties>
+  </object>
+  <object id="6" gid="471" x="631.333" y="355.667" width="21" height="21">
+   <properties>
+    <property name="point_value" type="int" value="10"/>
+   </properties>
+  </object>
+  <object id="7" gid="442" x="502.667" y="303.667" width="21" height="21">
+   <properties>
+    <property name="point_value" type="int" value="20"/>
+   </properties>
+  </object>
+  <object id="8" gid="444" x="925.333" y="304.333" width="21" height="21">
+   <properties>
+    <property name="point_value" type="int" value="20"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>
