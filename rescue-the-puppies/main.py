@@ -15,14 +15,14 @@ SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 650
 
 # Constants used to scale our sprites from their original size
-CHARACTER_SCALING = 2
-TILE_SCALING = 2.0
-COIN_SCALING = 2.0
+CHARACTER_SCALING = 1.5
+TILE_SCALING = 1.5
+COIN_SCALING = 1.5
 
 # Movement speed of player, in pixels per frame
-PLAYER_MOVEMENT_SPEED = 5
+PLAYER_MOVEMENT_SPEED = 10
 GRAVITY = 1
-PLAYER_JUMP_SPEED = 20
+PLAYER_JUMP_SPEED = 18
 
 class RescueThePuppies(arcade.Window):
     """
@@ -32,6 +32,9 @@ class RescueThePuppies(arcade.Window):
     def __init__(self):
         # Call the parent class and set up the window
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, resizable=False)
+
+        # Our TileMap Object
+        self.tile_map = None
 
         # Our Scene Object
         self.scene = None
@@ -61,21 +64,31 @@ class RescueThePuppies(arcade.Window):
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
 
-        # Set up the Camera
+        # Set up the Cameras
         self.camera = arcade.Camera(self.width, self.height)
-
-        # Set up the GUI Camera
         self.gui_camera = arcade.Camera(self.width, self.height)
+
+        # Name of map file to load
+        map_name = "assets/rescue-the-puppies-level-1.tmx"
+
+        # Layer specific options are defined based on Layer names in a dictionary
+        # Doing this will make the SpriteList for the platforms layer
+        # use spatial hashing for detection.
+        layer_options = {
+            "Platforms": {
+                "use_spatial_hash": True,
+            },
+        }
+
+        # Read in the tiled map
+        self.tile_map = arcade.load_tilemap(map_name, TILE_SCALING, layer_options)
+
+        # Initialize Scene with our TileMap, this will automatically add all layers
+        # from the map as SpriteLists in the scene in the proper order.
+        self.scene = arcade.Scene.from_tilemap(self.tile_map)
 
         # Keep track of the score
         self.score = 0
-
-        # Initialize Scene
-        self.scene = arcade.Scene()
-
-        # Create the Sprite lists
-        self.scene.add_sprite_list("Player")
-        self.scene.add_sprite_list("Walls", use_spatial_hash=True)
 
         # Set up the player, specifically placing it at these coordinates.
         image_source = "assets/platformerart_pixelredux_2/Tiles/tile_0019.png"
@@ -84,36 +97,14 @@ class RescueThePuppies(arcade.Window):
         self.player_sprite.center_y = 128
         self.scene.add_sprite("Player", self.player_sprite)
 
-        # Create the ground
-        # This shows using a loop to place multiple sprites horizontally
-        for x in range(0, 1250, 64):
-            wall = arcade.Sprite("assets/platformerart_pixelredux_2/Tiles/tile_0121.png", TILE_SCALING)
-            wall.center_x = x
-            wall.center_y = 32
-            self.scene.add_sprite("Walls", wall)
-
-        # Put some crates on the ground
-        # This shows using a coordinate list to place sprites
-        coordinate_list = [[512, 96], [256, 96], [768, 96]]
-
-        for coordinate in coordinate_list:
-            # Add a crate on the ground
-            wall = arcade.Sprite(
-                "assets/platformerart_pixelredux_2/Tiles/tile_0131.png", TILE_SCALING
-            )
-            wall.position = coordinate
-            self.scene.add_sprite("Walls", wall)
-
-        # Use a loop to place some coins for our character to pick up
-        for x in range(128, 1250, 256):
-            coin = arcade.Sprite("assets/platformerart_pixelredux_2/Tiles/tile_0078.png", COIN_SCALING)
-            coin.center_x = x
-            coin.center_y = 96
-            self.scene.add_sprite("Coins", coin)
+        # --- Other stuff
+        # Set the background color
+        if self.tile_map.background_color:
+            arcade.set_background_color(self.tile_map.background_color)
 
         # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEnginePlatformer(
-            self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Walls"]
+            self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["ground"]
         )
 
     def on_key_press(self, key: int, modifiers: int):
@@ -157,9 +148,9 @@ class RescueThePuppies(arcade.Window):
         # Move the player with the physics engine
         self.physics_engine.update()
 
-        # See if we hit any coins
+        # See if we hit any puppies
         coin_hit_list = arcade.check_for_collision_with_list(
-            self.player_sprite, self.scene["Coins"]
+            self.player_sprite, self.scene["puppies"]
         )
 
         # Loop through each coin we hit (if any) and remove it
