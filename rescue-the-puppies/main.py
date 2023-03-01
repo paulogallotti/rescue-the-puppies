@@ -56,7 +56,7 @@ class RescueThePuppies(arcade.Window):
         self.lifes = 3
 
         # Load sounds
-        self.collect_coin_sound = arcade.load_sound("assets/sounds/handleCoins.wav")
+        self.collect_coin_sound = arcade.load_sound("assets/sounds/dogbark.wav")
         self.jump_sound = arcade.load_sound("assets/sounds/confirmation_001.wav")
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)

@@ -16,7 +16,7 @@
    eJzt08kNADAIwDDE/hPz6hSVOOwF8koEAEBflTtbMN2vX3zIZQ+VZQPx
   </data>
  </layer>
- <layer id="2" name="goal" width="50" height="20">
+ <layer id="2" name="doors" width="50" height="20">
   <data encoding="base64" compression="zlib">
    eJztz1EJACAQRMHD/p20iGYxwvnhIchMgLdsBAAAwJnR7jd7QTOzCjbngx/8ZQMpJwND
   </data>
