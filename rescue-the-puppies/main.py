@@ -17,11 +17,25 @@ SCREEN_HEIGHT = 650
 CHARACTER_SCALING = 1.5
 TILE_SCALING = 1.5
 COIN_SCALING = 1.5
+SPRITE_PIXEL_SIZE = 128
+GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SCALING
 
 # Movement speed of player, in pixels per frame
 PLAYER_MOVEMENT_SPEED = 10
 GRAVITY = 1
 PLAYER_JUMP_SPEED = 18
+
+# Player starting position
+PLAYER_START_X = 64
+PLAYER_START_Y = 128
+
+# Layer Names from our TileMap
+LAYER_NAME_PUPPIES = "puppies"
+LAYER_NAME_POOP = "poop"
+LAYER_NAME_DOORS = "doors"
+LAYER_NAME_BACKGROUND = "background"
+LAYER_NAME_WINDOWS = "windows"
+LAYER_NAME_GROUND = "ground"
 
 class RescueThePuppies(arcade.Window):
     """
@@ -54,9 +68,19 @@ class RescueThePuppies(arcade.Window):
         self.score = 0
         self.lifes = 3
 
+        # Do we need to reset the score?
+        self.reset_score = True
+
+        # Where is the right edge of the map?
+        self.end_of_map = 0
+
+        # Level
+        self.level = 1
+
         # Load sounds
         self.collect_coin_sound = arcade.load_sound("assets/sounds/dogbark.wav")
         self.jump_sound = arcade.load_sound("assets/sounds/confirmation_001.wav")
+        self.game_over = arcade.load_sound("assets/sounds/handleCoins.wav")
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
@@ -68,15 +92,21 @@ class RescueThePuppies(arcade.Window):
         self.gui_camera = arcade.Camera(self.width, self.height)
 
         # Name of map file to load
-        map_name = "assets/rescue-the-puppies-level-1.tmx"
+        map_name = f"assets/rescue-the-puppies-level-{self.level}.tmx"
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
         # use spatial hashing for detection.
         layer_options = {
-            "Platforms": {
+            LAYER_NAME_GROUND: {
                 "use_spatial_hash": True,
             },
+            LAYER_NAME_PUPPIES: {
+                "use_spatial_hash": True,
+            },
+            LAYER_NAME_POOP: {
+                "use_spatial_hash": True,
+            }
         }
 
         # Read in the tiled map
@@ -86,15 +116,20 @@ class RescueThePuppies(arcade.Window):
         # from the map as SpriteLists in the scene in the proper order.
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
 
-        # Keep track of the score
-        self.score = 0
+        # Keep track of the score, make sure we keep the score if the player finishes a level
+        if self.reset_score:
+            self.score = 0
+        self.reset_score = True
 
         # Set up the player, specifically placing it at these coordinates.
         image_source = "assets/platformerart_pixelredux_2/Tiles/tile_0019.png"
         self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
-        self.player_sprite.center_x = 64
-        self.player_sprite.center_y = 128
+        self.player_sprite.center_x = PLAYER_START_X
+        self.player_sprite.center_y = PLAYER_START_Y
         self.scene.add_sprite("Player", self.player_sprite)
+
+        # Calculate the right edge of the my_map in pixels
+        self.end_of_map = self.tile_map.width * GRID_PIXEL_SIZE
 
         # --- Other stuff
         # Set the background color
@@ -103,7 +138,9 @@ class RescueThePuppies(arcade.Window):
 
         # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEnginePlatformer(
-            self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["ground"]
+            self.player_sprite, 
+            gravity_constant=GRAVITY, 
+            walls=self.scene[LAYER_NAME_GROUND]
         )
 
     def on_key_press(self, key: int, modifiers: int):
@@ -149,7 +186,7 @@ class RescueThePuppies(arcade.Window):
 
         # See if we hit any puppies
         coin_hit_list = arcade.check_for_collision_with_list(
-            self.player_sprite, self.scene["puppies"]
+            self.player_sprite, self.scene[LAYER_NAME_PUPPIES]
         )
 
         # Loop through each coin we hit (if any) and remove it
@@ -160,6 +197,36 @@ class RescueThePuppies(arcade.Window):
             arcade.play_sound(self.collect_coin_sound)
             # Add one to the score
             self.score += 1
+
+        # Did the player fall off the map?
+        if self.player_sprite.center_y < -100:
+            self.player_sprite.center_x = PLAYER_START_X
+            self.player_sprite.center_y = PLAYER_START_Y
+
+            arcade.play_sound(self.game_over)
+            self.lifes -= 1
+
+        # Did the player touch something they should not?
+        if arcade.check_for_collision_with_list(
+            self.player_sprite, self.scene[LAYER_NAME_POOP]
+        ):
+            self.player_sprite.change_x = 0
+            self.player_sprite.change_y = 0
+            self.player_sprite.center_x = PLAYER_START_X
+            self.player_sprite.center_y = PLAYER_START_Y
+
+            arcade.play_sound(self.game_over)
+
+        # See if the user got to the end of the level
+        if self.player_sprite.center_x >= self.end_of_map:
+            # Advance to the next level
+            self.level += 1
+
+            # Make sure to keep the score from this level when setting up the next level
+            self.reset_score = False
+
+            # Load the next level
+            self.setup()
 
         # Position the camera
         self.center_camera_to_player()
