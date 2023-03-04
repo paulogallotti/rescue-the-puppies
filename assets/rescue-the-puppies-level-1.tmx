@@ -8,7 +8,7 @@
  </layer>
  <layer id="3" name="background" width="50" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwXABAswMDIIEsBAz5fYIA80QIQOLEmm3HlCdPgFsQCV/GJGBR5o/QOAKEwPDVRz4GhPlfoCBi0CzLpGAL5No9zag+u048A4q+mMz0KwtJOCto/6gqT/eA836QAL+SMhuRiBiRHA/AdV/xoG/UNEfo2D4AwC0YFUN
+   eJxjYBgFo2AUjILhB8qZBtoFlIO5QD80APH8Ie6XoeqPTDT3UuoPaqRJYswQYGZgECSAq8h0CygM5kHDQBhojggZGNkMfEAPqFafAKaWP4zIwCPNHyBwBajmKg58jYl8f4AAst6LQPYlEvBlJkwz8IFtQHXbceAdVPTHZiB7Cwl466g/qOYPWPldgaT3PZD9gQT8EYsZKIARiBgRdn0C0p9x4C9MeMwZBaMADQAANO9vNg==
   </data>
  </layer>
  <layer id="7" name="windows" width="50" height="20">

@@ -6,7 +6,6 @@ Tile maps by author
 """
 
 import arcade
-#import pathlib
 
 # Game constants
 # Window dimensions
